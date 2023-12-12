@@ -4,7 +4,7 @@ from streamlit_echarts import st_echarts
 st.set_page_config(
     page_title="Contexte du projet",
     page_icon="👋",
-    layout="wide",
+    layout="centered",
 )
 
 st.write("# STAGE AKIGORA 💻")
