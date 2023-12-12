@@ -7,3 +7,4 @@ streamlit_echarts
 seaborn
 matplotlib
 plotly.express
+openpyxl
