@@ -8,3 +8,4 @@ seaborn
 matplotlib
 plotly.express
 streamlit_option_menu
+openpyxl
