@@ -5,5 +5,6 @@ pydeck
 streamlit
 streamlit_echarts
 seaborn
-matplotlib.pyplot
+matplotlib
 plotly.express
+openpyxl
