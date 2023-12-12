@@ -54,7 +54,7 @@ if selected == "Projet":
         st.empty()
 
     with col2:
-        st.markdown("[![Foo](https://www.kvn-hgs.com/wp-content/uploads/2023/12/le-logo-kvn-hgs.png)](https://www.kvn-hgs.com/)")
+        st.markdown("[![Foo](https://www.kvn-hgs.com/wp-content/uploads/2023/12/kvn-hgs-le-logo.png)](https://www.kvn-hgs.com/)")
         st.subheader("Analyse de données par Kévin HEUGAS")
         st.subheader("Data Analyst & Développeur en Intelligence Artificielle")
 
