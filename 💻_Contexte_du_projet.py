@@ -3,7 +3,7 @@ from streamlit_echarts import st_echarts
 
 st.set_page_config(
     page_title="Contexte du projet",
-    page_icon="👋",
+    page_icon="💻",
     layout="centered",
 )
 
