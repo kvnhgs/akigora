@@ -3,3 +3,7 @@ numpy
 pandas
 pydeck
 streamlit
+streamlit_echarts
+seaborn
+matplotlib.pyplot
+plotly.express
