@@ -58,7 +58,9 @@ if selected == "Projet":
         st.markdown("[![Foo](https://www.kvn-hgs.com/wp-content/uploads/2023/12/kvn-hgs-le-logo.png)](https://www.kvn-hgs.com/)")
         st.subheader("Analyse de données par Kévin HEUGAS")
         st.subheader("Data Analyst & Développeur en Intelligence Artificielle")
-        st.link_button("Contactez KVN HGS", "https://www.kvn-hgs.com/contact/")
+        st.link_button("📲 Contactez KVN HGS", "https://www.kvn-hgs.com/contact/")
+        st.link_button("🌐 LINKEDIN", "https://www.linkedin.com/in/kevinheugas/")
+
 
     with col3:
         st.empty()
