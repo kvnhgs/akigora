@@ -195,7 +195,7 @@ if selected == "RH":
             st.pyplot(fig)
 
         with onglets[3]:
-            st.header("Pourcentage d'experts par domaine d'activité")
+            st.header("Nombre d'experts par domaine d'activité")
 
             domaines_options = ["Tous les domaines d'activités"] + list(dfE["Domaine_D'activité"].unique())
 
