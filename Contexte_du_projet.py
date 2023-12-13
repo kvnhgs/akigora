@@ -100,7 +100,7 @@ if selected == "RH":
         st.title("Le département RH")
 
         titres_onglets = ["**Nb. experts inscrits / mois**", "**Nb. experts visibles**", "**% de profil complétés**",
-                          "**% d'experts par activité**", "**Nb. d'experts / ville**", "**Nb. experts / région**",
+                          "**% d'experts par activité**", "**Nb. d'experts / ville**", "**Nb. d'experts / région**",
                           "**% d'entretiens**", "**% LinkedIn**", "**Nb. d'écoles et d'entreprises**"]
         onglets = st.tabs(titres_onglets)
 
@@ -242,11 +242,8 @@ if selected == "RH":
             filtered_data = grouped_data[(grouped_data["Id_Experts"] >= selected_experts_range[0]) &
                                          (grouped_data["Id_Experts"] <= selected_experts_range[1])]
 
-            experts_count = filtered_data['Id_Experts'].sum()
-            villes = ', '.join(filtered_data['Ville'])
-
-            st.markdown(
-                f"Il y a **{experts_count} experts** dans les villes de **{villes}**.")
+            for index, row in filtered_data.iterrows():
+                st.markdown(f"Il y a **{row['Id_Experts']} experts** dans la ville de **{row['Ville']}**.")
 
             fig, ax = plt.subplots(figsize=(10, 8))
             filtered_data = filtered_data.sort_values(by="Id_Experts", ascending=True)
@@ -468,7 +465,16 @@ if selected == "Commercial":
         st.empty()
 
 if selected == "Datasets":
-    st.title("Les Datasets")
+    col1, col2, col3 = st.columns([0.3, 0.4, 0.3])
+
+    with col1:
+        st.empty()
+
+    with col2:
+        st.title("Les Datasets")
+
+    with col3:
+        st.empty()
 
     st.write("\n")
     st.write("\n")
