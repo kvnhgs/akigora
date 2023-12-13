@@ -102,7 +102,7 @@ if selected == "RH":
         st.title("Le département RH")
 
         titres_onglets = ["**Nb. experts inscrits / mois**", "**Nb. experts visibles**", "**% de profil complétés**",
-                          "**% d'experts par activité**", "**Nb. d'experts / ville**", "**Nb. d'experts / région**",
+                          "**Nb. d'experts par activité**", "**Nb. d'experts / ville**", "**Nb. d'experts / région**",
                           "**% d'entretiens**", "**% LinkedIn**", "**Nb. d'écoles et d'entreprises**"]
         onglets = st.tabs(titres_onglets)
 
