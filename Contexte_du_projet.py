@@ -17,9 +17,10 @@ dfC = pd.read_excel("Collection_Clients.xlsx")
 
 #Config menu
 st.set_page_config(
-    page_title="Contexte du projet",
-    page_icon="👋",
+    page_title="AKIGORA BY KVN HGS",
+    page_icon="💻",
     layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
 st.markdown(
@@ -38,7 +39,7 @@ sns.set(style="whitegrid")
 
 selected = option_menu(
     menu_title="Stage AKIGORA",
-    options=["Projet", "RH", "Commercial", "Marketing", "Datasets", "Remerciements"],
+    options=["Projet", "RH", "Commercial", "Marketing", "Datasets"],
     icons=["laptop", "people-fill", "currency-euro", "building-check", "database-lock", "check-circle-fill"],
     menu_icon="laptop",
     default_index=0,
@@ -53,27 +54,39 @@ if selected == "Projet":
         st.empty()
 
     with col2:
-        st.markdown("[![Foo](https://www.kvn-hgs.com/wp-content/uploads/2023/12/le-logo-kvn-hgs.png)](https://www.kvn-hgs.com/)")
+
+        st.markdown("[![Foo](https://www.kvn-hgs.com/wp-content/uploads/2023/12/kvn-hgs-le-logo.png)](https://www.kvn-hgs.com/)")
         st.subheader("Analyse de données par Kévin HEUGAS")
         st.subheader("Data Analyst & Développeur en Intelligence Artificielle")
+        st.link_button("Contactez KVN HGS", "https://www.kvn-hgs.com/contact/")
 
-        st.write("\n")
-        st.write("\n")
+    with col3:
+        st.empty()
+
+    st.write("\n")
+    st.write("\n")
+    col6, col7, col8, col9 = st.columns([0.2, 0.3, 0.3, 0.2])
+
+    with col6:
+        st.empty()
+
+    with col7:
         st.subheader("École Microsoft IA by SIMPLON")
         st.write("Ce projet s'inscrit dans le cadre de la formation Data Analyst et Développeur en Intelligence Artificielle à l'École IA Microsft by SIMPLON à Bayonne")
+        st.write("Depuis 5 ans, Simplon opère à Bayonne afin de proposer des parcours allant de 6 semaines à 19 mois. Notre objectif : vous permettre de booster votre employabilité et intégrer une entreprise du territoire. Nous proposons majoritairement des formations en alternance accessibles à toutes et tous sans prérequis de diplôme, mais également des parcours dédiés à des talents souhaitant se lancer dans l'entreprenariat et ayant besoin de compétences techniques ! Vous souhaitez vous former ou vous reconvertir dans les métiers du numérique ?")
+        st.link_button("Contactez SIMPLON", "https://nouvelleaquitaine.simplon.co/simplon-euskadi.html")
         st.write("\n")
-        st.markdown("[![Foo](https://www.kvn-hgs.com/wp-content/uploads/2023/12/2_Logo_SIMPLON.png)](https://nouvelleaquitaine.simplon.co/simplon-euskadi.html)")
+        st.markdown("[![Foo](https://www.kvn-hgs.com/wp-content/uploads/2023/12/simplon-simplon.png)](https://nouvelleaquitaine.simplon.co/simplon-euskadi.html)")
 
-        st.write("\n")
-        st.write("\n")
-
+    with col8:
         st.subheader("LE CONTEXTE ET LE PROJET")
         st.write("Le projet de Data Visualization vise à permettre à un groupe d'étudiants de créer un dashboard interactif pour visualiser divers indicateurs. Ces indicateurs sont disponibles aujourd’hui grâce aux données que nous exploitons en interne. Nous manquons aujourd’hui d’un outil pour nous permettre d’observer l’évolution de nos données dans le temps. Ces données sont de types variables, il peut s’agir de données sur les inscriptions, de données financières, de données sur l’utilisation de la plateforme etc.")
         st.write("Le projet consiste à concevoir et développer un dashboard interactif qui offre une visualisation claire et efficace des indicateurs de données sélectionnés et communiqués aux étudiants.")
+        st.link_button("Contactez AKIGORA", "https://akigora.com/")
         st.write("\n")
-        st.markdown("[![Foo](https://www.kvn-hgs.com/wp-content/uploads/2023/12/logo_akigora.png)](https://akigora.com/)")
+        st.markdown("[![Foo](https://www.kvn-hgs.com/wp-content/uploads/2023/12/akigora-akigora.png)](https://akigora.com/)")
 
-    with col3:
+    with col9:
         st.empty()
 
 if selected == "RH":
