@@ -38,7 +38,7 @@ st.set_option('deprecation.showPyplotGlobalUse', False)
 sns.set(style="whitegrid")
 
 selected = option_menu(
-    menu_title="Stage AKIGORA",
+    menu_title="DASHBOARD AKIGORA",
     options=["Projet", "RH", "Commercial", "Marketing", "Datasets"],
     icons=["laptop", "people-fill", "currency-euro", "building-check", "database-lock", "check-circle-fill"],
     menu_icon="laptop",
