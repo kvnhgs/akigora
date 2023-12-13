@@ -110,26 +110,22 @@ if selected == "RH":
             dfE['Date'] = pd.to_datetime(dfE['Date'], format='%d/%m/%Y')
             dfE['Mois'] = dfE['Date'].dt.to_period("M")
             df_experts_par_mois = dfE.groupby('Mois')['Id_Experts'].count().reset_index()
+            df_experts_par_mois['Mois_Str'] = df_experts_par_mois['Mois'].dt.strftime('%B %Y')
+            months_list = df_experts_par_mois['Mois_Str'].tolist()
 
-            plt.figure(figsize=(10, 8))
+            min_index, max_index = st.select_slider('**Sélectionner la plage de mois**',
+                                                    options=range(len(months_list)),
+                                                    value=(0, len(months_list) - 1),
+                                                    format_func=lambda x: months_list[x])
 
-            all_months_option = "Tous les mois"
-            months_list = [all_months_option] + df_experts_par_mois['Mois'].astype(str).tolist()
-            selected_months = st.multiselect('**Sélectionner les mois**', months_list, default=[all_months_option])
-            if all_months_option in selected_months:
-                filtered_df = df_experts_par_mois
-            else:
-                filtered_df = df_experts_par_mois[df_experts_par_mois['Mois'].astype(str).isin(selected_months)]
-
-            if len(selected_months) == 1:
-                phrase = f"**{filtered_df['Id_Experts'].sum()} experts** se sont inscrits au mois de **{selected_months[0]}**."
-            elif all_months_option in selected_months:
-                phrase = f"**{filtered_df['Id_Experts'].sum()} experts** se sont inscrits au total."
-            else:
-                phrase = f"**{filtered_df['Id_Experts'].sum()} experts** se sont inscrits aux mois de **{', '.join(selected_months)}**."
+            filtered_df = df_experts_par_mois.iloc[min_index:max_index + 1]
+            start_month = months_list[min_index]
+            end_month = months_list[max_index]
+            phrase = f"**{filtered_df['Id_Experts'].sum()} experts** se sont inscrits entre **{start_month}** et **{end_month}**."
             st.markdown(f"{phrase}")
 
-            sns.barplot(x=filtered_df['Mois'], y=filtered_df['Id_Experts'],
+            plt.figure(figsize=(10, 8))
+            sns.barplot(x=filtered_df['Mois_Str'], y=filtered_df['Id_Experts'],
                         color="red", edgecolor="black", linewidth=3, width=0.5)
             plt.xlabel('Mois', size=20)
             plt.ylabel('Nombre d\'experts', size=20)
@@ -165,30 +161,29 @@ if selected == "RH":
         with onglets[2]:
             st.header("Nombre d'experts avec le pourcentage des profils complétés")
 
+            dfE['Date'] = pd.to_datetime(dfE['Date'], format='%d/%m/%Y')
+            dfE['Mois'] = dfE['Date'].dt.to_period("M")
+            df_experts_par_mois = dfE.groupby('Mois')['Id_Experts'].count().reset_index()
+
             grouped_data = dfE.groupby("Pourcentage_Profil_Complété")["Id_Experts"].nunique().reset_index()
             grouped_data.columns = ["Pourcentage", "Count_Experts"]
-            average_percentage_all_data = dfE["Pourcentage_Profil_Complété"].mean()
-            pourcentage_options = grouped_data["Pourcentage"].unique().tolist()
 
-            # Intégrer "Toutes les données" au multiselect et le sélectionner par défaut
-            selected_percentages = st.multiselect("**Sélectionner les pourcentages**",
-                                                  ["Toutes les données"] + pourcentage_options,
-                                                  default=["Toutes les données"])
+            min_percentage = grouped_data["Pourcentage"].min()
+            max_percentage = grouped_data["Pourcentage"].max()
 
-            if "Toutes les données" in selected_percentages:
-                filtered_data = grouped_data
-                selected_percentages_str = "Toutes les données"
-            else:
-                filtered_data = grouped_data[grouped_data["Pourcentage"].isin(selected_percentages)]
-                selected_percentages_str = ", ".join(map(str, selected_percentages))
+            selected_range = st.slider('**Sélectionner la plage de pourcentages**',
+                                       min_value=min_percentage,
+                                       max_value=max_percentage,
+                                       value=(min_percentage, max_percentage))
+
+            filtered_data = grouped_data[(grouped_data["Pourcentage"] >= selected_range[0]) &
+                                         (grouped_data["Pourcentage"] <= selected_range[1])]
 
             total_experts = filtered_data["Count_Experts"].sum()
+            average_percentage = filtered_data["Pourcentage"].mean()
 
-            if "Toutes les données" in selected_percentages:
-                st.markdown(
-                    f"**{total_experts} experts** ont rempli leur profil à **{average_percentage_all_data:.2f}%** en moyenne.")
-            else:
-                st.markdown(f"**{total_experts} experts** ont rempli leur profil à **{selected_percentages_str}%**")
+            st.markdown(
+                f"**{total_experts} experts** ont rempli leur profil à **{average_percentage:.2f}%** en moyenne dans la plage sélectionnée.")
 
             fig, ax = plt.subplots(figsize=(10, 8))
             sns.barplot(x="Pourcentage", y="Count_Experts", data=filtered_data, ax=ax,
@@ -230,30 +225,32 @@ if selected == "RH":
         with onglets[4]:
             st.header("Nombre d'experts par ville (Top 10 et les autres)")
 
-            experts_par_ville = dfE.groupby("Location")["Id_Experts"].nunique().reset_index()
+            experts_par_ville = dfE.groupby("Ville")["Id_Experts"].nunique().reset_index()
             experts_par_ville = experts_par_ville.sort_values(by="Id_Experts", ascending=False)
             top_10_villes = experts_par_ville.head(10)
-            reste = pd.DataFrame({"Location": ["Autres"], "Id_Experts": [experts_par_ville.iloc[10:, 1].sum()]})
+            reste = pd.DataFrame({"Ville": ["Autres"], "Id_Experts": [experts_par_ville.iloc[10:, 1].sum()]})
             grouped_data = pd.concat([top_10_villes, reste])
-            selected_villes = st.multiselect("**Choisissez les villes**", grouped_data["Location"])
 
-            for ville in selected_villes:
-                if ville == "Autres":
-                    experts_count = grouped_data[grouped_data["Location"] == "Autres"]['Id_Experts'].values[0]
-                    total_experts = grouped_data["Id_Experts"].sum()
-                    percentage = (experts_count / total_experts) * 100
-                    st.markdown(
-                        f"Il y a **{experts_count} experts** dans les autres villes, ce qui représente **{percentage:.2f}%** des experts.")
-                else:
-                    experts_count = grouped_data[grouped_data["Location"] == ville]['Id_Experts'].values[0]
-                    total_experts = grouped_data["Id_Experts"].sum()
-                    percentage = (experts_count / total_experts) * 100
-                    st.markdown(
-                        f"Il y a **{experts_count} experts à {ville}**, ce qui représente **{percentage:.2f}%** des experts.")
+            min_experts = grouped_data["Id_Experts"].min()
+            max_experts = grouped_data["Id_Experts"].max()
+
+            selected_experts_range = st.slider('**Sélectionner la plage du nombre d’experts**',
+                                               min_value=min_experts,
+                                               max_value=max_experts,
+                                               value=(min_experts, max_experts))
+
+            filtered_data = grouped_data[(grouped_data["Id_Experts"] >= selected_experts_range[0]) &
+                                         (grouped_data["Id_Experts"] <= selected_experts_range[1])]
+
+            experts_count = filtered_data['Id_Experts'].sum()
+            villes = ', '.join(filtered_data['Ville'])
+
+            st.markdown(
+                f"Il y a **{experts_count} experts** dans les villes de **{villes}**.")
 
             fig, ax = plt.subplots(figsize=(10, 8))
-            grouped_data = grouped_data.sort_values(by="Id_Experts", ascending=True)
-            ax.barh(grouped_data["Location"], grouped_data["Id_Experts"],
+            filtered_data = filtered_data.sort_values(by="Id_Experts", ascending=True)
+            ax.barh(filtered_data["Ville"], filtered_data["Id_Experts"],
                     color="red", edgecolor="black", linewidth=2, height=0.5)
             ax.set_xlabel("Nombre d'experts", size=20)
             ax.set_ylabel("Ville", size=20)
@@ -262,47 +259,82 @@ if selected == "RH":
         with onglets[5]:
             st.header("Nombre d'experts par région")
 
-            experts_par_region = dfV.groupby("Région")["Ville"].count().reset_index()
-            experts_par_region.columns = ["Région", "Nombre_Villes"]
-            experts_par_region = experts_par_region.sort_values(by="Nombre_Villes", ascending=False)
-            top_10_regions = experts_par_region.head(10)
-            reste_regions = pd.DataFrame(
-                {"Région": ["Autres"], "Nombre_Villes": [experts_par_region.iloc[10:, 1].sum()]})
-            grouped_data_regions = pd.concat([top_10_regions, reste_regions])
+            combined_data = pd.merge(dfE, dfV, on="Ville", how="left")
 
-            regions_list = grouped_data_regions["Région"].tolist()
-            regions_list.insert(0, "Toutes les régions")
-            selected_regions = st.multiselect("**Choisissez les régions**", regions_list)
+            experts_par_region = combined_data.groupby("Région")["Id_Experts"].nunique().reset_index()
+            experts_par_region.columns = ["Région", "Nombre_Experts"]
+            experts_par_region = experts_par_region.sort_values(by="Nombre_Experts", ascending=False)
 
-            if "Toutes les régions" in selected_regions:
-                selected_regions = grouped_data_regions["Région"].tolist()  # Sélectionner toutes les régions par défaut
+            if len(experts_par_region) > 10:
+                top_10_regions = experts_par_region.head(10)
+                reste_regions = pd.DataFrame(
+                    {"Région": ["Autres"], "Nombre_Experts": [experts_par_region.iloc[10:, 1].sum()]})
+                grouped_data_regions = pd.concat([top_10_regions, reste_regions])
+            else:
+                grouped_data_regions = experts_par_region
 
-            for region in selected_regions:
-                if region == "Autres":
-                    experts_count = \
-                        grouped_data_regions[grouped_data_regions["Région"] == "Autres"]['Nombre_Villes'].values[0]
-                    total_villes = grouped_data_regions["Nombre_Villes"].sum()
-                    percentage = (experts_count / total_villes) * 100
-                    st.markdown(
-                        f"Il y a **{experts_count} villes** dans les autres régions, ce qui représente **{percentage:.2f}%** des villes.")
-                else:
-                    experts_count = \
-                        grouped_data_regions[grouped_data_regions["Région"] == region]['Nombre_Villes'].values[0]
-                    total_villes = grouped_data_regions["Nombre_Villes"].sum()
-                    percentage = (experts_count / total_villes) * 100
-                    st.markdown(
-                        f"Il y a **{experts_count} villes** dans la région **{region}**, ce qui représente **{percentage:.2f}%** des villes.")
+            min_experts = grouped_data_regions["Nombre_Experts"].min()
+            max_experts = grouped_data_regions["Nombre_Experts"].max()
+
+            selected_experts_range = st.slider('**Sélectionner la plage du nombre d’experts par région**',
+                                               min_value=min_experts,
+                                               max_value=max_experts,
+                                               value=(min_experts, max_experts))
+
+            filtered_data_regions = grouped_data_regions[
+                (grouped_data_regions["Nombre_Experts"] >= selected_experts_range[0]) &
+                (grouped_data_regions["Nombre_Experts"] <= selected_experts_range[1])]
+
+            total_experts = filtered_data_regions['Nombre_Experts'].sum()
+            st.markdown(f"Il y a **{total_experts} experts** dans les régions sélectionnées.")
+
+            for index, row in filtered_data_regions.iterrows():
+                st.markdown(f"Il y a **{row['Nombre_Experts']} experts** dans la région **{row['Région']}**.")
 
             fig, ax = plt.subplots(figsize=(10, 8))
-            grouped_data_regions = grouped_data_regions.sort_values(by="Nombre_Villes", ascending=True)
-            ax.barh(grouped_data_regions["Région"], grouped_data_regions["Nombre_Villes"],
+            filtered_data_regions = filtered_data_regions.sort_values(by="Nombre_Experts", ascending=True)
+            ax.barh(filtered_data_regions["Région"], filtered_data_regions["Nombre_Experts"],
                     color="red", edgecolor="black", linewidth=2, height=0.5)
-            ax.set_xlabel("Nombre de Villes", size=25)
-            ax.set_ylabel("Région", size=25)
+            ax.set_xlabel("Nombre d'experts", size=20)
+            ax.set_ylabel("Région", size=20)
             st.pyplot(fig)
 
         with onglets[6]:
             st.header("Pourcentage d'entretiens passés")
+
+            import streamlit as st
+            import plotly.express as px
+            import pandas as pd
+
+            # Supposons que dfE est déjà chargé
+            # dfE = pd.read_csv('chemin_vers_dfE.csv')
+
+            # Calcul des pourcentages d'entretiens passés et non passés
+            entretien_counts = dfE['Done'].value_counts()
+            total_entretiens = len(dfE)
+            percentage_passed = (entretien_counts[True] / total_entretiens) * 100
+            percentage_not_passed = (entretien_counts[False] / total_entretiens) * 100
+
+            # Affichage du pourcentage avec Markdown
+            st.markdown(f"**{percentage_passed:.1f}% des utilisateurs** ont passé un entretien.")
+
+            # Création du graphique en camembert
+            fig = px.pie(
+                names=['Entretien Passé', 'Entretien Non Passé'],
+                values=[percentage_passed, percentage_not_passed],
+                labels={'percentage_passed': 'Entretien Passé', 'percentage_not_passed': 'Entretien Non Passé'},
+            )
+            fig.update_traces(
+                marker=dict(colors=['black', 'red'], line=dict(color='black', width=3)),
+                textinfo='label+percent',
+            )
+            fig.update_layout(
+                font=dict(size=20),
+                showlegend=False,
+            )
+
+            # Affichage du graphique
+            st.plotly_chart(fig)
 
         with onglets[7]:
             st.header("Pourcentage d'importation de profil LinkedIn")
@@ -393,9 +425,9 @@ if selected == "Commercial":
 
         with onglets[1]:
             def calculer_stats(colonne):
-                min_val = dfE[colonne].min()
-                max_val = dfE[colonne].max()
-                moyenne = dfE[colonne].mean()  # Calculer la moyenne de toutes les valeurs de la colonne
+                min_val = round(dfE[colonne].min())
+                max_val = round(dfE[colonne].max())
+                moyenne = round(dfE[colonne].mean())
                 return min_val, max_val, moyenne
 
 
