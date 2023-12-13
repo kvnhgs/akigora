@@ -4,6 +4,10 @@ import streamlit as st
 import seaborn as sns
 import matplotlib.pyplot as plt
 import plotly.express as px
+from streamlit_extras.add_vertical_space import add_vertical_space
+from streamlit_extras.row import row
+from streamlit_extras.metric_cards import style_metric_cards
+
 
 # Datasets
 dfE = pd.read_excel("Collection_Experts.xlsx")
@@ -14,6 +18,7 @@ dfS = pd.read_excel("Collection_Recherches.xlsx")
 dfU = pd.read_excel("Collection_Utilisateurs.xlsx")
 dfV = pd.read_excel("Collection_Villes.xlsx")
 dfC = pd.read_excel("Collection_Clients.xlsx")
+dfCT = pd.read_excel("Collection_Consultations.xlsx")
 
 #Config menu
 st.set_page_config(
@@ -23,19 +28,9 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-st.markdown(
-    """
-<style>
-    [data-testid="collapsedControl"] {
-        display: none
-    }
-</style>
-""",
-    unsafe_allow_html=True,
-)
-
 st.set_option('deprecation.showPyplotGlobalUse', False)
 sns.set(style="whitegrid")
+style_metric_cards(background_color="#FFFFFF", border_left_color="#DE1F1F", box_shadow="DE1F1F")
 
 selected = option_menu(
     menu_title="DASHBOARD AKIGORA BETA",
@@ -58,8 +53,18 @@ if selected == "Projet":
         st.markdown("[![Foo](https://www.kvn-hgs.com/wp-content/uploads/2023/12/kvn-hgs-le-logo.png)](https://www.kvn-hgs.com/)")
         st.subheader("Analyse de données par Kévin HEUGAS")
         st.subheader("Data Analyst & Développeur en Intelligence Artificielle")
-        st.link_button("📲 Contactez KVN HGS", "https://www.kvn-hgs.com/contact/")
-        st.link_button("🌐 LINKEDIN", "https://www.linkedin.com/in/kevinheugas/")
+        add_vertical_space(1)
+        links_row = row(2, vertical_align="center")
+        links_row.link_button(
+            "📲 Contact KVN HGS",
+            "https://www.kvn-hgs.com/contact/",
+            use_container_width=True,
+        )
+        links_row.link_button(
+            "🌐 LINKEDIN",
+            "https://www.linkedin.com/in/kevinheugas/",
+            use_container_width=True,
+        )
 
 
     with col3:
@@ -76,7 +81,7 @@ if selected == "Projet":
         st.subheader("École Microsoft IA by SIMPLON")
         st.write("Ce projet s'inscrit dans le cadre de la formation Data Analyst et Développeur en Intelligence Artificielle à l'École IA Microsft by SIMPLON à Bayonne")
         st.write("Depuis 5 ans, Simplon opère à Bayonne afin de proposer des parcours allant de 6 semaines à 19 mois. Notre objectif : vous permettre de booster votre employabilité et intégrer une entreprise du territoire. Nous proposons majoritairement des formations en alternance accessibles à toutes et tous sans prérequis de diplôme, mais également des parcours dédiés à des talents souhaitant se lancer dans l'entreprenariat et ayant besoin de compétences techniques ! Vous souhaitez vous former ou vous reconvertir dans les métiers du numérique ?")
-        st.link_button("Contactez SIMPLON", "https://nouvelleaquitaine.simplon.co/simplon-euskadi.html")
+        st.link_button("Contact SIMPLON", "https://nouvelleaquitaine.simplon.co/simplon-euskadi.html")
         st.write("\n")
         st.markdown("[![Foo](https://www.kvn-hgs.com/wp-content/uploads/2023/12/simplon-simplon.png)](https://nouvelleaquitaine.simplon.co/simplon-euskadi.html)")
 
@@ -84,7 +89,7 @@ if selected == "Projet":
         st.subheader("LE CONTEXTE ET LE PROJET")
         st.write("Le projet de Data Visualization vise à permettre à un groupe d'étudiants de créer un dashboard interactif pour visualiser divers indicateurs. Ces indicateurs sont disponibles aujourd’hui grâce aux données que nous exploitons en interne. Nous manquons aujourd’hui d’un outil pour nous permettre d’observer l’évolution de nos données dans le temps. Ces données sont de types variables, il peut s’agir de données sur les inscriptions, de données financières, de données sur l’utilisation de la plateforme etc.")
         st.write("Le projet consiste à concevoir et développer un dashboard interactif qui offre une visualisation claire et efficace des indicateurs de données sélectionnés et communiqués aux étudiants.")
-        st.link_button("Contactez AKIGORA", "https://akigora.com/")
+        st.link_button("Contact AKIGORA", "https://akigora.com/")
         st.write("\n")
         st.markdown("[![Foo](https://www.kvn-hgs.com/wp-content/uploads/2023/12/akigora-akigora.png)](https://akigora.com/)")
 
@@ -103,7 +108,7 @@ if selected == "RH":
 
         titres_onglets = ["**Nb. experts inscrits / mois**", "**Nb. experts visibles**", "**% de profil complétés**",
                           "**Nb. d'experts par activité**", "**Nb. d'experts / ville**", "**Nb. d'experts / région**",
-                          "**% d'entretiens**", "**% LinkedIn**", "**Nb. d'écoles et d'entreprises**"]
+                          "**% d'entretiens**", "**% LinkedIn**"]
         onglets = st.tabs(titres_onglets)
 
         with onglets[0]:
@@ -361,7 +366,83 @@ if selected == "RH":
 
             st.plotly_chart(fig)
 
-        with onglets[8]:
+    with col3:
+        st.empty()
+
+if selected == "Commercial":
+
+    col1, col2, col3 = st.columns([0.3, 0.4, 0.3])
+
+    with col1:
+        st.empty()
+
+    with col2:
+        st.title("Le département Commercial")
+
+        titres_onglets = ["**Nb. de missions**", "**Tarif journalier et tarif horaire**", "**Nb. d'écoles et d'entreprises**"]
+        onglets = st.tabs(titres_onglets)
+
+        with onglets[0]:
+            st.header("Nombre de missions")
+
+            nombre_total_missions = dfI['Id_Interventions'].nunique()
+            total_heures = round(dfI['Nombre_Heures'].sum())
+            moyenne_heures = round(dfI['Nombre_Heures'].mean())
+
+            st.metric(label="Nombre total unique de missions", value=f"{nombre_total_missions}")
+            st.metric(label="Somme totale des heures", value=f"{total_heures} heures")
+            st.metric(label="Durée moyenne des missions", value=f"{moyenne_heures} heures")
+
+        with onglets[1]:
+            def calculer_stats(colonne):
+                min_val = round(dfE[colonne].min())
+                max_val = round(dfE[colonne].max())
+                moyenne = round(dfE[colonne].mean())
+                return min_val, max_val, moyenne
+
+
+            min_max_moyenne_tarif_journalier_minimum = calculer_stats('Tarif_Journalier_Minimum')
+            min_max_moyenne_tarif_journalier_maximum = calculer_stats('Tarif_Journalier_Maximum')
+            min_max_moyenne_tarif_heure_minimum = calculer_stats('Tarif_Heure_Minimum')
+            min_max_moyenne_tarif_heure_maximum = calculer_stats('Tarif_Heure_Maximum')
+
+            st.header("Tarif journalier minimum")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric(label="Minimum", value=f"{min_max_moyenne_tarif_journalier_minimum[0]} €")
+            with col2:
+                st.metric(label="Maximum", value=f"{min_max_moyenne_tarif_journalier_minimum[1]} €")
+            with col3:
+                st.metric(label="Moyenne", value=f"{min_max_moyenne_tarif_journalier_minimum[2]} €")
+
+            st.header("Tarif journalier maximum")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric(label="Minimum", value=f"{min_max_moyenne_tarif_journalier_maximum[0]} €")
+            with col2:
+                st.metric(label="Maximum", value=f"{min_max_moyenne_tarif_journalier_maximum[1]} €")
+            with col3:
+                st.metric(label="Moyenne", value=f"{min_max_moyenne_tarif_journalier_maximum[2]} €")
+
+            st.header("Tarif heure minimum")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric(label="Minimum", value=f"{min_max_moyenne_tarif_heure_minimum[0]} €")
+            with col2:
+                st.metric(label="Maximum", value=f"{min_max_moyenne_tarif_heure_minimum[1]} €")
+            with col3:
+                st.metric(label="Moyenne", value=f"{min_max_moyenne_tarif_heure_minimum[2]} €")
+
+            st.header("Tarif heure maximum")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric(label="Minimum", value=f"{min_max_moyenne_tarif_heure_maximum[0]} €")
+            with col2:
+                st.metric(label="Maximum", value=f"{min_max_moyenne_tarif_heure_maximum[1]} €")
+            with col3:
+                st.metric(label="Moyenne", value=f"{min_max_moyenne_tarif_heure_maximum[2]} €")
+
+        with onglets[2]:
             st.header("Nombre d'écoles et d'entreprises clientes")
 
             nombre_ecoles = len(dfC[dfC['Entreprise_Ecole'] == 'school'])
@@ -395,7 +476,7 @@ if selected == "RH":
     with col3:
         st.empty()
 
-if selected == "Commercial":
+if selected == "Marketing":
 
     col1, col2, col3 = st.columns([0.3, 0.4, 0.3])
 
@@ -403,65 +484,94 @@ if selected == "Commercial":
         st.empty()
 
     with col2:
-        st.title("Le département Commercial")
+        st.title("Le département Marketing")
 
-        titres_onglets = ["**Nb. de missions**", "**Tarif journalier et tarif horaire**"]
+        titres_onglets = ["**Nb. de recherches**", "**Nb. consultations**", "**Nb. d'écoles et d'entreprises**"]
         onglets = st.tabs(titres_onglets)
 
         with onglets[0]:
-            st.header("Nombre de missions")
+            st.header("Nombre de recherches")
 
-            nombre_total_missions = dfI['Id_Interventions'].nunique()
-            st.markdown(f"Nombre total unique de missions : **{nombre_total_missions}**.")
+            dfS['Date_Recherche'] = pd.to_datetime(dfS['Date_Recherche'], format='%d/%m/%Y')
 
-            total_heures = dfI['Nombre_Heures'].sum()
-            total_heures_rounded = round(total_heures)
-            st.markdown(f"La somme totale des heures est : **{total_heures_rounded} heures**.")
+            nombre_recherches = dfS['Id_Recherches'].nunique()
+            st.markdown(f"Le nombre total de recherches est : **{nombre_recherches}**")
 
-            moyenne_heures = dfI['Nombre_Heures'].mean()
-            moyenne_heures_rounded = round(moyenne_heures)
-            st.markdown(f"La durée moyenne des missions est : **{moyenne_heures_rounded} heures**.")
+            dfS_grouped = dfS.groupby(dfS['Date_Recherche'].dt.date)['Id_Recherches'].nunique().reset_index()
+            dfS_grouped.columns = ['Date', 'Nombre_Recherches']
+
+            min_date = dfS_grouped['Date'].min()
+            max_date = dfS_grouped['Date'].max()
+
+            selected_date_range = st.slider('**Sélectionner la plage de dates**',
+                                            min_value=min_date,
+                                            max_value=max_date,
+                                            value=(min_date, max_date),
+                                            format="DD/MM/YYYY")
+
+            filtered_data = dfS_grouped[(dfS_grouped['Date'] >= selected_date_range[0]) &
+                                        (dfS_grouped['Date'] <= selected_date_range[1])]
+
+            nombre_recherches_filtrées = filtered_data['Nombre_Recherches'].sum()
+            st.markdown(
+                f"Il y a **{nombre_recherches_filtrées} recherches** entre le **{selected_date_range[0].strftime('%d/%m/%Y')}** et le **{selected_date_range[1].strftime('%d/%m/%Y')}**.")
+
+            fig, ax = plt.subplots(figsize=(10, 8))
+            sns.lineplot(x='Date', y='Nombre_Recherches', data=filtered_data, ax=ax, marker='o', color='red',
+                         markersize=10, linewidth=1)
+            ax.set_xlabel("Date", size=20)
+            ax.set_ylabel("Nombre de Recherches", size=20)
+            plt.xticks(rotation=45)
+            st.pyplot(fig)
 
         with onglets[1]:
-            def calculer_stats(colonne):
-                min_val = round(dfE[colonne].min())
-                max_val = round(dfE[colonne].max())
-                moyenne = round(dfE[colonne].mean())
-                return min_val, max_val, moyenne
+            st.header("Nombre de consultations")
+
+            import streamlit as st
+            import pandas as pd
+            import matplotlib.pyplot as plt
+            from pandas.errors import OutOfBoundsDatetime
 
 
-            min_max_moyenne_tarif_journalier_minimum = calculer_stats('Tarif_Journalier_Minimum')
-            min_max_moyenne_tarif_journalier_maximum = calculer_stats('Tarif_Journalier_Maximum')
-            min_max_moyenne_tarif_heure_minimum = calculer_stats('Tarif_Heure_Minimum')
-            min_max_moyenne_tarif_heure_maximum = calculer_stats('Tarif_Heure_Maximum')
+            # Chargement des données
+            # dfCT = pd.read_csv('chemin_vers_votre_fichier.csv')
 
-            st.header("Colonne TJ minimum")
-            st.markdown(f"""
-                Minimum : **{min_max_moyenne_tarif_journalier_minimum[0]} €**\n 
-                Maximum : **{min_max_moyenne_tarif_journalier_minimum[1]} €**\n
-                Moyenne : **{min_max_moyenne_tarif_journalier_minimum[2]} €**
-            """)
+            # Convertir EPOCH en datetime, avec gestion des erreurs
+            def safe_convert_to_datetime(column, unit='s'):
+                try:
+                    return pd.to_datetime(column, unit=unit)
+                except OutOfBoundsDatetime:
+                    return pd.to_datetime(column, unit=unit,
+                                          errors='coerce')  # Coerce les valeurs problématiques en NaT
 
-            st.header("Colonne TJ maximum")
-            st.markdown(f"""
-                Minimum : **{min_max_moyenne_tarif_journalier_maximum[0]} €**\n
-                Maximum : **{min_max_moyenne_tarif_journalier_maximum[1]} €**\n
-                Moyenne : **{min_max_moyenne_tarif_journalier_maximum[2]} €**
-            """)
 
-            st.header("Colonne TH minimum")
-            st.markdown(f"""
-                Minimum : **{min_max_moyenne_tarif_heure_minimum[0]} €**\n
-                Maximum : **{min_max_moyenne_tarif_heure_minimum[1]} €**\n
-                Moyenne : **{min_max_moyenne_tarif_heure_minimum[2]} €**
-            """)
+            dfCT['Date_de_Création'] = safe_convert_to_datetime(dfCT['Date_de_Création'], unit='s')  # ou 'ms'
 
-            st.header("Colonne TH maximum")
-            st.markdown(f"""
-                Minimum : **{min_max_moyenne_tarif_heure_maximum[0]} €**\n
-                Maximum : **{min_max_moyenne_tarif_heure_maximum[1]} €**\n
-                Moyenne : **{min_max_moyenne_tarif_heure_maximum[2]} €**
-            """)
+            # Nettoyage des données (optionnel, enlever les NaT si nécessaire)
+            dfCT = dfCT.dropna(subset=['Date_de_Création'])
+
+            # Calcul du nombre unique de consultations
+            nombre_unique_consultations = dfCT['Id_Consultations'].nunique()
+
+            # Afficher le nombre unique de consultations avec Streamlit
+            st.metric(label="Nombre de consultations", value=nombre_unique_consultations)
+
+            # Préparation des données pour le graphique
+            donnees_graphique = dfCT.groupby(dfCT['Date_de_Création'].dt.date)['Id_Consultations'].nunique()
+
+            # Vérifier s'il y a des données à tracer
+            if not donnees_graphique.empty:
+                # Création du graphique
+                plt.figure(figsize=(10, 6))
+                donnees_graphique.plot(kind='bar')
+                plt.xlabel('Date de Création')
+                plt.ylabel('Nombre de Consultations')
+                plt.title('Nombre de Consultations par Date de Création')
+
+                # Afficher le graphique avec Streamlit
+                st.pyplot(plt)
+            else:
+                st.write("Aucune donnée disponible pour l'affichage du graphique.")
 
     with col3:
         st.empty()
