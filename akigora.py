@@ -20,7 +20,7 @@ dfV = pd.read_excel("Collection_Villes.xlsx")
 dfC = pd.read_excel("Collection_Clients.xlsx")
 dfCT = pd.read_excel("Collection_Consultations.xlsx")
 
-#Config menu
+# Config menu
 st.set_page_config(
     page_title="AKIGORA BY KVN HGS",
     page_icon="💻",
@@ -30,7 +30,7 @@ st.set_page_config(
 
 st.set_option('deprecation.showPyplotGlobalUse', False)
 sns.set(style="whitegrid")
-style_metric_cards(background_color="#FFFFFF", border_left_color="#DE1F1F", box_shadow="DE1F1F")
+style_metric_cards(background_color="#FFFFFF", border_left_color="#DE1F1F", box_shadow=True)
 
 selected = option_menu(
     menu_title="DASHBOARD AKIGORA BETA",
@@ -510,15 +510,15 @@ if selected == "Marketing":
                                             format="DD/MM/YYYY")
 
             filtered_data = dfS_grouped[(dfS_grouped['Date'] >= selected_date_range[0]) &
-                                        (dfS_grouped['Date'] <= selected_date_range[1])]
+                                       (dfS_grouped['Date'] <= selected_date_range[1])]
 
-            nombre_recherches_filtrées = filtered_data['Nombre_Recherches'].sum()
+            nombre_recherches_filtrees = filtered_data['Nombre_Recherches'].sum()
             st.markdown(
-                f"Il y a **{nombre_recherches_filtrées} recherches** entre le **{selected_date_range[0].strftime('%d/%m/%Y')}** et le **{selected_date_range[1].strftime('%d/%m/%Y')}**.")
+               f"Il y a **{nombre_recherches_filtrees} recherches** entre le **{selected_date_range[0].strftime('%d/%m/%Y')}** et le **{selected_date_range[1].strftime('%d/%m/%Y')}**.")
 
             fig, ax = plt.subplots(figsize=(10, 8))
             sns.lineplot(x='Date', y='Nombre_Recherches', data=filtered_data, ax=ax, marker='o', color='red',
-                         markersize=10, linewidth=1)
+                        markersize=10, linewidth=1)
             ax.set_xlabel("Date", size=20)
             ax.set_ylabel("Nombre de Recherches", size=20)
             plt.xticks(rotation=45)
@@ -527,51 +527,27 @@ if selected == "Marketing":
         with onglets[1]:
             st.header("Nombre de consultations")
 
-            import streamlit as st
-            import pandas as pd
-            import matplotlib.pyplot as plt
-            from pandas.errors import OutOfBoundsDatetime
+            nombre_total_consultations = dfCT['Id_Consultations'].nunique()
+            st.markdown(f"Nombre total de consultations : **{nombre_total_consultations}**.")
 
+            consultations_par_expert = dfCT.groupby('Id_Experts')['Id_Consultations'].nunique().reset_index()
+            consultations_par_expert.columns = ['Id_Experts', 'Nombre_Consultations']
+            consultations_par_expert = consultations_par_expert.sort_values(by='Nombre_Consultations', ascending=False)
 
-            # Chargement des données
-            # dfCT = pd.read_csv('chemin_vers_votre_fichier.csv')
+            top_10_experts = consultations_par_expert.head(10)
 
-            # Convertir EPOCH en datetime, avec gestion des erreurs
-            def safe_convert_to_datetime(column, unit='s'):
-                try:
-                    return pd.to_datetime(column, unit=unit)
-                except OutOfBoundsDatetime:
-                    return pd.to_datetime(column, unit=unit,
-                                          errors='coerce')  # Coerce les valeurs problématiques en NaT
+            fig, ax = plt.subplots(figsize=(10, 8))
+            sns.barplot(x='Nombre_Consultations', y='Id_Experts', data=top_10_experts, ax=ax,
+                        color="red", edgecolor="black", linewidth=2, width=0.5)
+            ax.set_xlabel("Nombre de Consultations", size=20)
+            ax.set_ylabel("Id_Experts", size=20)
+            st.pyplot(fig)
 
+            markdown_text = "Liste de tous les experts et leurs nombres de consultations :\n"
+            for index, row in consultations_par_expert.iterrows():
+                markdown_text += f"- Expert ID: **{row['Id_Experts']}** a **{row['Nombre_Consultations']}** consultations.\n"
 
-            dfCT['Date_de_Création'] = safe_convert_to_datetime(dfCT['Date_de_Création'], unit='s')  # ou 'ms'
-
-            # Nettoyage des données (optionnel, enlever les NaT si nécessaire)
-            dfCT = dfCT.dropna(subset=['Date_de_Création'])
-
-            # Calcul du nombre unique de consultations
-            nombre_unique_consultations = dfCT['Id_Consultations'].nunique()
-
-            # Afficher le nombre unique de consultations avec Streamlit
-            st.metric(label="Nombre de consultations", value=nombre_unique_consultations)
-
-            # Préparation des données pour le graphique
-            donnees_graphique = dfCT.groupby(dfCT['Date_de_Création'].dt.date)['Id_Consultations'].nunique()
-
-            # Vérifier s'il y a des données à tracer
-            if not donnees_graphique.empty:
-                # Création du graphique
-                plt.figure(figsize=(10, 6))
-                donnees_graphique.plot(kind='bar')
-                plt.xlabel('Date de Création')
-                plt.ylabel('Nombre de Consultations')
-                plt.title('Nombre de Consultations par Date de Création')
-
-                # Afficher le graphique avec Streamlit
-                st.pyplot(plt)
-            else:
-                st.write("Aucune donnée disponible pour l'affichage du graphique.")
+            st.markdown(markdown_text)
 
     with col3:
         st.empty()
