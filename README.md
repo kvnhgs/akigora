@@ -1,7 +1,7 @@
-# Welcome to streamlit
+# Bienvenue sur le dashboard AKIGORA BETA 1.0
 
-This is the app you get when you run `streamlit hello`, extracted as its own app.
+Ce streamlit python est réalisé pour le stage Data Analyst dans l'entreprise Akigora, Bordeaux.
 
-Edit [Hello.py](./Hello.py) to customize this app to your heart's desire. ❤️
+Réalisé par Kévin HEUGAS [KVN HGS](https://kvn-hgs.com/) [LINKEDIN](https://www.linkedin.com/in/kevinheugas/)
 
-Check it out on [Streamlit Community Cloud](https://st-hello-app.streamlit.app/)
+École Microsoft IA by Simplon [Simplon](https://nouvelleaquitaine.simplon.co/simplon-euskadi.html)
