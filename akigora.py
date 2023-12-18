@@ -10,15 +10,19 @@ from streamlit_extras.metric_cards import style_metric_cards
 
 
 # Datasets
-dfE = pd.read_excel("Collection_Experts.xlsx")
-dfI = pd.read_excel("Collection_Interventions.xlsx")
-dfN = pd.read_excel("Collection_Newsletters.xlsx")
-dfR = pd.read_excel("Collection_Recommandations.xlsx")
-dfS = pd.read_excel("Collection_Recherches.xlsx")
-dfU = pd.read_excel("Collection_Utilisateurs.xlsx")
-dfV = pd.read_excel("Collection_Villes.xlsx")
-dfC = pd.read_excel("Collection_Clients.xlsx")
-dfCT = pd.read_excel("Collection_Consultations.xlsx")
+def load_data(file_name):
+    return pd.read_excel(file_name)
+
+
+dfE = load_data("Collection_Experts.xlsx")
+dfI = load_data("Collection_Interventions.xlsx")
+dfN = load_data("Collection_Newsletters.xlsx")
+dfR = load_data("Collection_Recommandations.xlsx")
+dfS = load_data("Collection_Recherches.xlsx")
+dfU = load_data("Collection_Utilisateurs.xlsx")
+dfV = load_data("Collection_Villes.xlsx")
+dfC = load_data("Collection_Clients.xlsx")
+dfCT = load_data("Collection_Consultations.xlsx")
 
 # Config menu
 st.set_page_config(
@@ -40,6 +44,43 @@ selected = option_menu(
     default_index=0,
     orientation="horizontal"
 )
+
+# Fonctions graphiques
+
+
+def create_bar_chart(data, x, y, rotation=45):
+    plt.figure(figsize=(10, 8))
+    sns.barplot(data=data, x=x, y=y, color="red", edgecolor="black", linewidth=3)
+    plt.xlabel(x)
+    plt.ylabel(y)
+    plt.xticks(rotation=rotation)
+    st.pyplot()
+
+
+def create_pie_chart(names, values, colors=None, line_color='black', line_width=3):
+    fig = px.pie(names=names, values=values)
+    fig.update_traces(marker=dict(colors=colors if colors else ['black', 'red'],
+                                  line=dict(color=line_color, width=line_width)), textinfo='label+percent')
+    fig.update_layout(font=dict(size=20), showlegend=True)
+    st.plotly_chart(fig)
+
+
+def create_countplot(data, x, xlabel, ylabel, rotation=45, color="red", figsize=(14, 11)):
+    plt.figure(figsize=figsize)
+    sns.countplot(data=data, x=x, color=color, edgecolor="black", linewidth=2, width=0.5)
+    plt.xlabel(xlabel, size=20)
+    plt.ylabel(ylabel, size=20)
+    plt.xticks(rotation=rotation, ha='right')
+    st.pyplot()
+
+
+def create_barh_chart(data, x, y, xlabel, ylabel, figsize=(10, 8), color="red", linewidth=2):
+    fig, ax = plt.subplots(figsize=figsize)
+    data = data.sort_values(by=x, ascending=True)
+    ax.barh(data[y], data[x], color=color, edgecolor="black", linewidth=linewidth)
+    ax.set_xlabel(xlabel, size=20)
+    ax.set_ylabel(ylabel, size=20)
+    st.pyplot(fig)
 
 if selected == "Projet":
 
@@ -79,16 +120,29 @@ if selected == "Projet":
 
     with col7:
         st.subheader("École Microsoft IA by SIMPLON")
-        st.write("Ce projet s'inscrit dans le cadre de la formation Data Analyst et Développeur en Intelligence Artificielle à l'École IA Microsft by SIMPLON à Bayonne")
-        st.write("Depuis 5 ans, Simplon opère à Bayonne afin de proposer des parcours allant de 6 semaines à 19 mois. Notre objectif : vous permettre de booster votre employabilité et intégrer une entreprise du territoire. Nous proposons majoritairement des formations en alternance accessibles à toutes et tous sans prérequis de diplôme, mais également des parcours dédiés à des talents souhaitant se lancer dans l'entreprenariat et ayant besoin de compétences techniques ! Vous souhaitez vous former ou vous reconvertir dans les métiers du numérique ?")
+        st.write("Ce projet s'inscrit dans le cadre de la formation Data Analyst et Développeur en Intelligence "
+                 "Artificielle à l'École IA Microsft by SIMPLON à Bayonne")
+        st.write("Depuis 5 ans, Simplon opère à Bayonne afin de proposer des parcours allant de 6 semaines à 19 mois. "
+                 "Notre objectif : vous permettre de booster votre employabilité et intégrer une entreprise du "
+                 "territoire. Nous proposons majoritairement des formations en alternance accessibles à toutes et tous "
+                 "sans prérequis de diplôme, mais également des parcours dédiés à des talents souhaitant se lancer dans "
+                 "l'entreprenariat et ayant besoin de compétences techniques ! Vous souhaitez vous former ou vous "
+                 "reconvertir dans les métiers du numérique ?")
         st.link_button("Contact SIMPLON", "https://nouvelleaquitaine.simplon.co/simplon-euskadi.html")
         st.write("\n")
-        st.markdown("[![Foo](https://www.kvn-hgs.com/wp-content/uploads/2023/12/simplon-simplon.png)](https://nouvelleaquitaine.simplon.co/simplon-euskadi.html)")
+        st.markdown("[![Foo](https://www.kvn-hgs.com/wp-content/uploads/2023/12/simplon-simplon.png)]"
+                    "(https://nouvelleaquitaine.simplon.co/simplon-euskadi.html)")
 
     with col8:
         st.subheader("LE CONTEXTE ET LE PROJET")
-        st.write("Le projet de Data Visualization vise à permettre à un groupe d'étudiants de créer un dashboard interactif pour visualiser divers indicateurs. Ces indicateurs sont disponibles aujourd’hui grâce aux données que nous exploitons en interne. Nous manquons aujourd’hui d’un outil pour nous permettre d’observer l’évolution de nos données dans le temps. Ces données sont de types variables, il peut s’agir de données sur les inscriptions, de données financières, de données sur l’utilisation de la plateforme etc.")
-        st.write("Le projet consiste à concevoir et développer un dashboard interactif qui offre une visualisation claire et efficace des indicateurs de données sélectionnés et communiqués aux étudiants.")
+        st.write("Le projet de Data Visualization vise à permettre à un groupe d'étudiants de créer un dashboard "
+                 "einteractif pour visualiser divers indicateurs. Ces indicateurs sont disponibles aujourd’hui grâce "
+                 "aux données que nous exploitons en interne. Nous manquons aujourd’hui d’un outil pour nous permettre "
+                 "d’observer l’évolution de nos données dans le temps. Ces données sont de types variables, il peut "
+                 "s’agir de données sur les inscriptions, de données financières, de données sur l’utilisation de la "
+                 "plateforme etc.")
+        st.write("Le projet consiste à concevoir et développer un dashboard interactif qui offre une visualisation "
+                 "claire et efficace des indicateurs de données sélectionnés et communiqués aux étudiants.")
         st.link_button("Contact AKIGORA", "https://akigora.com/")
         st.write("\n")
         st.markdown("[![Foo](https://www.kvn-hgs.com/wp-content/uploads/2023/12/akigora-akigora.png)](https://akigora.com/)")
@@ -131,13 +185,7 @@ if selected == "RH":
             phrase = f"**{filtered_df['Id_Experts'].sum()} experts** se sont inscrits entre **{start_month}** et **{end_month}**."
             st.markdown(f"{phrase}")
 
-            plt.figure(figsize=(10, 8))
-            sns.barplot(x=filtered_df['Mois_Str'], y=filtered_df['Id_Experts'],
-                        color="red", edgecolor="black", linewidth=3, width=0.5)
-            plt.xlabel('Mois', size=20)
-            plt.ylabel('Nombre d\'experts', size=20)
-            plt.xticks(rotation=45)
-            st.pyplot()
+            create_bar_chart(filtered_df, 'Mois', 'Id_Experts')
 
         with onglets[1]:
             st.header("Nombre d'experts visibles sur la plateforme")
@@ -149,31 +197,19 @@ if selected == "RH":
 
             st.markdown(f"**{percentage_visible:.1f}% des utilisateurs** sont visibles sur la plateforme.")
 
-            fig = px.pie(
+            create_pie_chart(
                 names=['Visible', 'Non visible'],
                 values=[percentage_visible, percentage_not_visible],
-                labels={'percentage_visible': 'Visible', 'percentage_not_visible': 'Non visible'},
             )
-            fig.update_traces(
-                marker=dict(colors=['black', 'red'], line=dict(color='black', width=3)),
-                textinfo='label+percent',
-            )
-            fig.update_layout(
-                font=dict(size=20),
-                showlegend=False,
-            )
-
-            st.plotly_chart(fig)
 
         with onglets[2]:
             st.header("Nombre d'experts avec le pourcentage des profils complétés")
 
             dfE['Date'] = pd.to_datetime(dfE['Date'], format='%d/%m/%Y')
             dfE['Mois'] = dfE['Date'].dt.to_period("M")
-            df_experts_par_mois = dfE.groupby('Mois')['Id_Experts'].count().reset_index()
 
             grouped_data = dfE.groupby("Pourcentage_Profil_Complété")["Id_Experts"].nunique().reset_index()
-            grouped_data.columns = ["Pourcentage", "Count_Experts"]
+            grouped_data.columns = ["Pourcentage", "Nombre experts"]
 
             min_percentage = grouped_data["Pourcentage"].min()
             max_percentage = grouped_data["Pourcentage"].max()
@@ -186,18 +222,13 @@ if selected == "RH":
             filtered_data = grouped_data[(grouped_data["Pourcentage"] >= selected_range[0]) &
                                          (grouped_data["Pourcentage"] <= selected_range[1])]
 
-            total_experts = filtered_data["Count_Experts"].sum()
+            total_experts = filtered_data["Nombre experts"].sum()
             average_percentage = filtered_data["Pourcentage"].mean()
 
             st.markdown(
                 f"**{total_experts} experts** ont rempli leur profil à **{average_percentage:.2f}%** en moyenne dans la plage sélectionnée.")
 
-            fig, ax = plt.subplots(figsize=(10, 8))
-            sns.barplot(x="Pourcentage", y="Count_Experts", data=filtered_data, ax=ax,
-                        color="red", edgecolor="black", linewidth=2, width=0.5)
-            ax.set_xlabel("Pourcentage de profils complétés", size=20)
-            ax.set_ylabel("Nombre d'experts", size=20)
-            st.pyplot(fig)
+            create_bar_chart(filtered_data, 'Pourcentage', 'Nombre experts')
 
         with onglets[3]:
             st.header("Nombre d'experts par domaine d'activité")
@@ -216,18 +247,8 @@ if selected == "RH":
             domaine_counts = domaine_counts.sort_values(ascending=True)
             filtered_df = filtered_df.set_index("Domaine_D'activité").loc[domaine_counts.index].reset_index()
 
-            for domaine in selected_domaines:
-                if domaine != "Tous les domaines d'activités":
-                    experts_count = filtered_df[filtered_df["Domaine_D'activité"] == domaine]['Id_Experts'].nunique()
-                    st.markdown(f"Il y a **{experts_count} experts** dans le domaine d'activité **{domaine}**.")
-
-            plt.figure(figsize=(14, 11))
-            sns.countplot(data=filtered_df, x="Domaine_D'activité",
-                          color="red", edgecolor="black", linewidth=2, width=0.5)
-            plt.xlabel("Domaine d'activité", size=30)
-            plt.ylabel("Nombre d'experts", size=30)
-            plt.xticks(rotation=45, ha='right')
-            st.pyplot(plt)
+            create_countplot(filtered_df, "Domaine_D'activité", "Répartition des Experts par Domaine d'Activité",
+                             "Domaine d'activité", 45)
 
         with onglets[4]:
             st.header("Nombre d'experts par ville (Top 10 et les autres)")
@@ -252,13 +273,7 @@ if selected == "RH":
             for index, row in filtered_data.iterrows():
                 st.markdown(f"Il y a **{row['Id_Experts']} experts** dans la ville de **{row['Ville']}**.")
 
-            fig, ax = plt.subplots(figsize=(10, 8))
-            filtered_data = filtered_data.sort_values(by="Id_Experts", ascending=True)
-            ax.barh(filtered_data["Ville"], filtered_data["Id_Experts"],
-                    color="red", edgecolor="black", linewidth=2, height=0.5)
-            ax.set_xlabel("Nombre d'experts", size=20)
-            ax.set_ylabel("Ville", size=20)
-            st.pyplot(fig)
+            create_barh_chart(filtered_data, 'Id_Experts', 'Ville', 'Nombre d\'experts', 'Ville')
 
         with onglets[5]:
             st.header("Nombre d'experts par région")
@@ -306,39 +321,17 @@ if selected == "RH":
         with onglets[6]:
             st.header("Pourcentage d'entretiens passés")
 
-            import streamlit as st
-            import plotly.express as px
-            import pandas as pd
-
-            # Supposons que dfE est déjà chargé
-            # dfE = pd.read_csv('chemin_vers_dfE.csv')
-
-            # Calcul des pourcentages d'entretiens passés et non passés
             entretien_counts = dfE['Done'].value_counts()
             total_entretiens = len(dfE)
             percentage_passed = (entretien_counts[True] / total_entretiens) * 100
             percentage_not_passed = (entretien_counts[False] / total_entretiens) * 100
 
-            # Affichage du pourcentage avec Markdown
             st.markdown(f"**{percentage_passed:.1f}% des utilisateurs** ont passé un entretien.")
 
-            # Création du graphique en camembert
-            fig = px.pie(
+            create_pie_chart(
                 names=['Entretien Passé', 'Entretien Non Passé'],
                 values=[percentage_passed, percentage_not_passed],
-                labels={'percentage_passed': 'Entretien Passé', 'percentage_not_passed': 'Entretien Non Passé'},
             )
-            fig.update_traces(
-                marker=dict(colors=['black', 'red'], line=dict(color='black', width=3)),
-                textinfo='label+percent',
-            )
-            fig.update_layout(
-                font=dict(size=20),
-                showlegend=False,
-            )
-
-            # Affichage du graphique
-            st.plotly_chart(fig)
 
         with onglets[7]:
             st.header("Pourcentage d'importation de profil LinkedIn")
@@ -350,21 +343,10 @@ if selected == "RH":
 
             st.markdown(f"**{percentage_linked_in:.1f}% des utilisateurs** ont effectué une importation LinkedIn.")
 
-            fig = px.pie(
+            create_pie_chart(
                 names=['LinkedIn', 'Non LinkedIn'],
                 values=[percentage_linked_in, percentage_not_linked_in],
-                labels={'percentage_linked_in': 'LinkedIn', 'percentage_not_linked_in': 'Non LinkedIn'},
             )
-            fig.update_traces(
-                marker=dict(colors=['red', 'black'], line=dict(color='black', width=3)),
-                textinfo='label+percent',
-            )
-            fig.update_layout(
-                font=dict(size=20),
-                showlegend=False,
-            )
-
-            st.plotly_chart(fig)
 
     with col3:
         st.empty()
@@ -457,21 +439,10 @@ if selected == "Commercial":
                 f"Il y a **{nombre_ecoles} écoles ({pourcentage_ecoles:.2f}%)** et **{nombre_entreprises} entreprises "
                 f"({pourcentage_entreprises:.2f}%)**.")
 
-            fig = px.pie(
-                names=labels,
-                values=values,
-                labels={'labels': 'Type'}
+            create_pie_chart(
+                names=['Écoles', 'Entreprises'],
+                values=[pourcentage_ecoles, pourcentage_entreprises],
             )
-            fig.update_traces(
-                marker=dict(colors=['black', 'red'], line=dict(color='black', width=3)),
-                textinfo='label+percent',
-            )
-            fig.update_layout(
-                font=dict(size=20),
-                showlegend=False,
-            )
-
-            st.plotly_chart(fig)
 
     with col3:
         st.empty()
@@ -486,7 +457,7 @@ if selected == "Marketing":
     with col2:
         st.title("Le département Marketing")
 
-        titres_onglets = ["**Nb. de recherches**", "**Nb. consultations**", "**Nb. d'écoles et d'entreprises**"]
+        titres_onglets = ["**Nb. de recherches**", "**Nb. consultations**"]
         onglets = st.tabs(titres_onglets)
 
         with onglets[0]:
@@ -514,7 +485,8 @@ if selected == "Marketing":
 
             nombre_recherches_filtrees = filtered_data['Nombre_Recherches'].sum()
             st.markdown(
-               f"Il y a **{nombre_recherches_filtrees} recherches** entre le **{selected_date_range[0].strftime('%d/%m/%Y')}** et le **{selected_date_range[1].strftime('%d/%m/%Y')}**.")
+               f"Il y a **{nombre_recherches_filtrees} recherches** entre le **{selected_date_range[0].strftime('%d/%m/%Y')}**"
+               f" et le **{selected_date_range[1].strftime('%d/%m/%Y')}**.")
 
             fig, ax = plt.subplots(figsize=(10, 8))
             sns.lineplot(x='Date', y='Nombre_Recherches', data=filtered_data, ax=ax, marker='o', color='red',
@@ -536,12 +508,7 @@ if selected == "Marketing":
 
             top_10_experts = consultations_par_expert.head(10)
 
-            fig, ax = plt.subplots(figsize=(10, 8))
-            sns.barplot(x='Nombre_Consultations', y='Id_Experts', data=top_10_experts, ax=ax,
-                        color="red", edgecolor="black", linewidth=2, width=0.5)
-            ax.set_xlabel("Nombre de Consultations", size=20)
-            ax.set_ylabel("Id_Experts", size=20)
-            st.pyplot(fig)
+            create_bar_chart(top_10_experts, 'Nombre_Consultations', 'Id_Experts')
 
             markdown_text = "Liste de tous les experts et leurs nombres de consultations :\n"
             for index, row in consultations_par_expert.iterrows():
