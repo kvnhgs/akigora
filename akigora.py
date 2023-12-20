@@ -1,5 +1,6 @@
 from streamlit_option_menu import option_menu
 import pandas as pd
+import numpy as np
 import streamlit as st
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -94,11 +95,31 @@ if selected == "Projet":
         st.markdown("[![Foo](https://www.kvn-hgs.com/wp-content/uploads/2023/12/kvn-hgs-le-logo.png)](https://www.kvn-hgs.com/)")
         st.subheader("Analyse de données par Kévin HEUGAS")
         st.subheader("Data Analyst & Développeur en Intelligence Artificielle")
+        st.subheader("Recherche alternance")
+        st.write("J’ai le plaisir de vous annoncer que j’ai commencé mon diplôme de Data Analyst et Développeur en "
+                 "Intelligence Artificielle à Simplon Nouvelle Aquitaine (École IA Microsoft By Simplon) à Bayonne.")
+        st.write("Je suis à la recherche d’une alternance à partir du 8 janvier 2024 jusqu’au 9 mai 2025. Cette alternance "
+                 "me permettra de créer une IA ou bien de mettre à profit mes compétences en data analyse et gestion de "
+                 "projet digitaux. Le but principal étant de participer au développement et à la pérennité de votre "
+                 "entreprise. Les outils technologiques devenant un axe d’évolution et stratégique incontournable.")
+
         add_vertical_space(1)
         links_row = row(2, vertical_align="center")
         links_row.link_button(
+            "📲 Dossier de candidature et CV",
+            "https://www.kvn-hgs.com/recherche-alternance/",
+            use_container_width=True,
+        )
+        links_row.link_button(
             "📲 Contact KVN HGS",
             "https://www.kvn-hgs.com/contact/",
+            use_container_width=True,
+        )
+
+        links_row = row(2, vertical_align="center")
+        links_row.link_button(
+            "🌐 GIT",
+            "https://github.com/kvnhgs/",
             use_container_width=True,
         )
         links_row.link_button(
@@ -113,7 +134,9 @@ if selected == "Projet":
 
     st.write("\n")
     st.write("\n")
-    col6, col7, col8, col9 = st.columns([0.2, 0.3, 0.3, 0.2])
+    st.write("\n")
+    st.write("\n")
+    col6, col7, col8 = st.columns([0.3, 0.4, 0.3])
 
     with col6:
         st.empty()
@@ -133,8 +156,11 @@ if selected == "Projet":
         st.markdown("[![Foo](https://www.kvn-hgs.com/wp-content/uploads/2023/12/simplon-simplon.png)]"
                     "(https://nouvelleaquitaine.simplon.co/simplon-euskadi.html)")
 
-    with col8:
-        st.subheader("LE CONTEXTE ET LE PROJET")
+        st.write("\n")
+        st.write("\n")
+        st.write("\n")
+        st.write("\n")
+        st.subheader("Le contexte du projet")
         st.write("Le projet de Data Visualization vise à permettre à un groupe d'étudiants de créer un dashboard "
                  "einteractif pour visualiser divers indicateurs. Ces indicateurs sont disponibles aujourd’hui grâce "
                  "aux données que nous exploitons en interne. Nous manquons aujourd’hui d’un outil pour nous permettre "
@@ -147,7 +173,7 @@ if selected == "Projet":
         st.write("\n")
         st.markdown("[![Foo](https://www.kvn-hgs.com/wp-content/uploads/2023/12/akigora-akigora.png)](https://akigora.com/)")
 
-    with col9:
+    with col8:
         st.empty()
 
 if selected == "RH":
@@ -497,7 +523,7 @@ if selected == "Marketing":
             st.pyplot(fig)
 
         with onglets[1]:
-            st.header("Nombre de consultations")
+            st.header("Nombre de consultations (Top 10)")
 
             nombre_total_consultations = dfCT['Id_Consultations'].nunique()
             st.markdown(f"Nombre total de consultations : **{nombre_total_consultations}**.")
