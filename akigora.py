@@ -153,7 +153,7 @@ if selected == "Projet":
                  "reconvertir dans les métiers du numérique ?")
         st.link_button("Contact SIMPLON", "https://nouvelleaquitaine.simplon.co/simplon-euskadi.html")
         st.write("\n")
-        st.markdown("[![Foo](https://www.kvn-hgs.com/wp-content/uploads/2023/12/simplon-simplon.png)]"
+        st.markdown("[![Foo](https://www.kvn-hgs.com/wp-content/uploads/2024/01/logo_simplon.png)]"
                     "(https://nouvelleaquitaine.simplon.co/simplon-euskadi.html)")
 
         st.write("\n")
